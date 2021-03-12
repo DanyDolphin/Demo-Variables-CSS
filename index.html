@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Variables CSS</title>
+    <style>
+        html {
+            padding: 32px 24px;
+            font-family: Verdana;
+        }
+        .flex { display: flex }
+        .column { flex: 0 0 50% }
+        .column:first-child { padding-right: 8px }
+        .column:last-child { padding-left: 8px }
+    </style>
+</head>
+<body>
+    <h1 style="font-size: 40px; text-align: center">
+        Variables en CSS
+    </h1>
+    <h2>Sintaxis</h2>
+    <section class="flex">
+        <div class="column">
+            Para declararlas usamos el prefijo "--" seguido del nombre de la variable.
+            Podemos asignarle cualquier valor aceptado en CSS (incluyendo espacios en blanco)
+        </div>
+        <div id="syntax" class="column">
+            <span class="red">Elemento rojo: </span>
+            <button class="red">Boton rojo</button>
+            <br/>
+            <span class="blue">Elemento azul: </span>
+            <button class="blue">Boton azul</button>
+            <br/>
+            <span class="green">Elemento verde: </span>
+            <button class="green">Boton verde</button>
+        </div>
+    </section>
+    <style>
+        #syntax .red {
+            --theme: #b82f14
+        }
+        #syntax .blue {
+            --theme: #142fb8
+        }
+        #syntax .green {
+            --theme: #17a61c
+        }
+
+        #syntax span {
+            color: var(--theme)
+        }
+        #syntax button {
+            color: white;
+            background-color: var(--theme);
+            border: none
+        }
+    </style>
+    <h2>Compatibilidad</h2>
+    <div class="flex">
+        <div class="column">
+            Actualmente es compatible con el 95.06% a nivel global
+            (segun <a href="https://caniuse.com/?search=custom%20properties">Caniuse</a>).
+            Si un navegador no soporta las custom properties, no va a interpretar la función var().
+            En estos casos, usamos la cascada.
+        </div>
+        <div id="compat" class="column">
+            Esta caja tendrá color:
+            <ul>
+                <li>Azul si mi navegador es compatible</li>
+                <li>Rojo si mi navegador no es compatible</li>
+                <li>Verde si la variable --background no existe</li>
+                <li>Ninguno si --background no tiene sentido</li>
+            </ul>
+        </div>
+    </div>
+    <style>
+        #compat {
+            --background: #9999FF;
+            /*--background: Arial;*/
+            background: #FF9999;
+            background: var(--background, #99FF99);
+        }
+    </style>
+    <div class="flex" style="margin-top: 16px;">
+        <div class="column">
+            Tambien podemos usar el query @supports
+        </div>
+        <div id="compat2" class="column">
+            Este recuadro será azúl si mi navegador es compatible con variables en css.
+            Rojo en caso contrario.
+        </div>
+    </div>
+    <style>
+        #compat2 {
+            background: #FF9999
+        }
+        @supports (--css: variables) {
+            #compat2 {
+                background: #9999FF
+            }
+        }
+    </style>
+    <h2>Propiedades de las variables en CSS</h2>
+    <h3>Alcance dinámico (basado en el DOM)</h3>
+    <div class="flex">
+        <div class="column">
+            Como las variables CSS son proiedades de CSS, su alcance esta basado en el DOM.
+            Esto significa que son resueltos por elemento, no por ambiente.
+        </div>
+        <div class="column" id="scope">
+            <button>Boton</button>
+            <div style="height: 100px; width: 100px; border-radius: 50px" id="scope-target"></div>
+        </div>
+    </div>
+    <style>
+        #scope button + #scope-target {
+            --shadow: #e2e2e2;
+            background-color: var(--shadow);
+        }
+
+        #scope button:hover + #scope-target {
+            --shadow: #99FF99;
+        }
+
+        #scope button:focus + #scope-target {
+            --shadow: #FF9999;
+        }
+    </style>
+    <h3>Herencia</h3>
+    <div class="flex">
+        <div class="column">
+            Al igual que las propiedades normales de CSS, las variables en CSS son heredables.
+        </div>
+        <div class="column">
+            <div class="inherit">
+                <div style="padding: 16px" class="bg">
+                    <div style="padding: 16px" class="txt">
+                        Estos div heredan la variable --theme
+                    </div>
+                </div>
+            </div>
+            <div style="padding: 16px" class="bg">
+                <div style="padding: 16px" class="txt">
+                    Estos div NO heredan la variable --theme
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        .inherit {
+            --theme: #99FF99;
+            --theme-dark: #009900;
+        }
+        .bg {
+            background-color: var(--theme, #FF9999)
+        }
+        .txt {
+            background-color: white;
+            color: var(--theme-dark, #990000)
+        }
+    </style>
+    <h3>Reactividad</h3>
+    <div class="flex">
+        <div class="column">
+            LA PROPIEDAD MAS IMPORTANTE. Actualizar una variable en CSS hace que los demás elementos que lo usan cambien de manera reactiva.
+            Esto facilita el uso de Javascript para cambiar los estilos.
+        </div>
+        <div class="column">
+            <div id="mousepad">
+                <div id="dot"></div>
+            </div>
+        </div>
+    </div>
+    <style>
+        #mousepad {
+            height: 150px;
+            border: 1px solid #e2e2e2;
+            position: relative
+        }
+        #dot {
+            position: absolute;
+            background-color: hsl(var(--x, 0), 100%, 50%);
+            height: 35px;
+            width: 35px;
+            border-radius: 35px;
+            top: calc(1px * var(--y, 75px));
+            left: calc(1px * var(--x, 75px));
+        }
+    </style>
+    <script>
+        const pad = document.getElementById("mousepad")
+        const target = document.getElementById("dot")
+        pad.addEventListener("mousemove", evt => {
+            let rect = pad.getBoundingClientRect();
+            let x = evt.clientX - rect.left;
+            let y = evt.clientY - rect.top;
+
+            target.style.setProperty("--x", x);
+            target.style.setProperty("--y", y);
+        });
+    </script>
+    <h2>Usos practicos</h2>
+    <h3>Paleta de colores</h3>
+    <div class="flex" style="justify-content: center" id="palette">
+        <div class="lighter"></div>
+        <div class="light"></div>
+        <div class="base"></div>
+        <div class="dark"></div>
+        <div class="darker"></div>
+    </div>
+    <style>
+        #palette {
+            --hue-base: 120;
+            --color-lighter: hsl(var(--hue-base), 10%, 90%);
+            --color-light: hsl(var(--hue-base), 30%, 70%);
+            --color-base: hsl(var(--hue-base), 50%, 50%);
+            --color-dark: hsl(var(--hue-base), 70%, 30%);
+            --color-darker: hsl(var(--hue-base), 90%, 10%);
+        }
+        #palette > div {
+            height: 48px;
+            width: 48px;
+            border-radius: 48px;
+            margin-right: 8px;
+            }
+        #palette > div.lighter { background-color: var(--color-lighter) }
+        #palette > div.light { background-color: var(--color-light) }
+        #palette > div.base { background-color: var(--color-base) }
+        #palette > div.dark { background-color: var(--color-dark) }
+        #palette > div.darker { background-color: var(--color-darker) }
+    </style>
+    <h3>Encapsulamiento de estilos</h3>
+    <div class="flex" style="justify-content: center" id="encap">
+        <button>Base</button>
+        <button class="danger">Peligro</button>
+        <button class="confirm">Confirmar</button>
+    </div>
+    <style>
+        #encap button {
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            margin-right: 8px;
+            background-color: var(--color, #000);
+            color: white;
+        }
+        #encap button.danger { --color: #990000 }
+        #encap button.confirm { --color: #009900 }
+    </style>
+    <h3>Generalizar propiedades</h3>
+    <div class="flex" style="justify-content: center">
+        <div class="glow-container" style="padding: 8px">
+            Esto es contenido<br>
+            <span>Esto es un elemento hijo</span>
+        </div>
+    </div>
+    <style>
+        * {
+            box-shadow: 0 0 .3em var(--subtle-glow) gold;
+        }
+        .glow-container {
+            --subtle-glow: .05em;
+        }
+        .glow-container span {
+            --subtle-glow: initial;
+        }
+    </style>
+</body>
+</html>
